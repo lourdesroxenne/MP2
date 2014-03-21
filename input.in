@@ -1,0 +1,23 @@
+begin vars 
+	x, y, z use as number; //wazz
+	person  use as word; //dsfas
+end vars  //dsfadsf
+
+//sdfasd
+//asdfas 
+
+begin statements  //dsfadsf
+	
+	read x;   //dsfadsf
+	read y;   //dsfadsf
+	  //dsfadsf
+	read person;  
+	//ruks
+	print x;//yes
+	print person;   //dsfadsf
+  //dsfadsf
+end statements
+  //dsfadsf  //dsfadsf
+
+                        
+
