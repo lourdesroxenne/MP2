@@ -45,6 +45,14 @@ public class Grammar {
 		}
 	}
 
+	public boolean isWord(String token) {
+		if(token.charAt(0) == '"' && token.charAt(token.length()-1) == '"' ) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 	/* Checks if a given string is an <data type> */ 	
 	public boolean isDataType(String token) {
 		if(token.equals("word") || token.equals("number")) {
@@ -82,4 +90,55 @@ public class Grammar {
 		}
 
 	}
+
+	/** Checks if the string is an operand
+  * Operands are numbers and variables
+  *
+  * @param str			The string that needs to be checked
+  * @return boolean 	Returns false if the string is "+", "-", "/", "(" and ")"
+  */
+	 public boolean isOperand(String str) {
+		if( str.equals("-") ||
+			str.equals("+") ||
+			str.equals("/") ||
+			str.equals("*") ||
+			str.equals("(") ||
+			str.equals(")")
+		 ) {
+			return false;
+		}
+
+		return true;
+	 } //end of method: isOperand
+
+/** Checks if the string is an operand
+  * Operands are numbers and variables
+  *
+  * @param str			The string that needs to be checked
+  * @return boolean 	Returns true if the string is "+", "-", "/", "(" and ")"
+  */
+	public boolean isOperator (String str) {
+		if( str.equals("-") ||
+			str.equals("+") ||
+			str.equals("/") ||
+			str.equals("*")
+		){
+			return true;
+		}
+		return false;
+	}//end of method: isOperator
+
+	/** Checks if the string is an opening or closing parenthesis
+  *
+  * @param str			The string that needs to be checked
+  * @return boolean 	Returns true if the string is "(" and ")"
+  */
+	public boolean isParenthesis(String str) {
+		if( str.equals("(")   || str.equals(")") ) {
+			return true;
+		}
+
+		 return false;
+	 }//end of method: isParenthesis
+
 }

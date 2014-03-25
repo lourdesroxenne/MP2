@@ -28,20 +28,18 @@ public class Compile {
 
 	}//end of CONSTRUCTOR
 
-	public void readCode() {
+	public void readCode(String code) {
 
-        try {
-        	BufferedReader br = new BufferedReader(new FileReader("input.in"));
+		//StringTokenizer tokenizer = new StringTokenizer(code, "\n", true);
 
-            String line = br.readLine();
-            while(line != null) {
-                line = line.trim(); //to remove whitespaces at both ends of the string
-                line = stategrammar.extractStatement(line);
-                linesofcode.add(line);
-                line = br.readLine();
-            }
-        } catch(Exception e) {
-        	e.printStackTrace();
+		String[] tokens = code.split("\\n");
+		//while(tokenizer.hasMoreTokens()) {
+			//String line = tokenizer.nextToken();
+		for(int i=0; i<tokens.length; i++) {
+			String line = tokens[i];
+			line = line.trim(); //to remove whitespaces at both ends of the string
+            line = stategrammar.extractStatement(line);
+            linesofcode.add(line);
         }
 
 	} //end of method readCode
@@ -174,19 +172,46 @@ public class Compile {
 		String errormessage = "";
 		
 		if(stategrammar.isAssignmentStatement(statement)) {
-			StringTokenizer tokenize = new StringTokenizer(statement, "()+-*/= ");
-			boolean isCorrect = true;
-			while(tokenize.hasMoreTokens()) {
-				String token = tokenize.nextToken();
+			statement = statement.replaceAll(" ", "");
+			String[] tokens = statement.split("=");
 
-				if(stategrammar.isIdentifier(token)) {
-					if(!isDeclared(token)) {
-						errormessage = "error: cannot find symbol - variable " + token;
-						isCorrect = false;
-					}
-				}
+			String identifier = tokens[0];
+			String expression = tokens[1];
+
+			int index = -1;
+			String vartype = "";
+			if(!isDeclared(identifier))  {
+				errormessage = "error: cannot find symbol - variable " + identifier;
+			} else {
+				index = searchIndex(identifier);
+				vartype = variables.get(index).getType();
 			}
-			if(isCorrect) {
+
+			if(stategrammar.isWord(expression)) {
+				if(!vartype.equals("word")) {
+					errormessage = "error: incompatible types";
+				}
+			} else if(stategrammar.isIdentifier(expression)) {
+				if(!isDeclared(expression))  {
+					errormessage = "error: cannot find symbol - variable " + expression;
+				} else {
+					int index2 = searchIndex(expression);
+
+					if(!vartype.equals(variables.get(index2).getType())) {
+						
+						errormessage = "error: incompatible types";
+					}
+				}int index2 = searchIndex(expression);
+
+				if(!vartype.equals(variables.get(index2).getType())) {
+					errormessage = "error: incompatible types";
+				}
+			} else if(stategrammar.isNumExpression(expression)) {
+				if(!vartype.equals("number")) {
+					errormessage = "error: incompatible types";
+				}
+			} 
+			if(errormessage.equals("")) {
 				statements.add(statement);
 			}
 		} else {
@@ -202,6 +227,17 @@ public class Compile {
 		return errormessage;
 
 	} //end of method processStatement
+
+	public int searchIndex(String str){
+        //from 0 kay gichange to -1 kay naa man juy sulod ang 0 nga index
+        int num=-1;
+        for(int i=0;i<variables.size();i++) {
+            if(str.equals(variables.get(i).getName())) {
+                num=i;
+            }
+        }
+        return num;
+    }
 
 	public boolean isDeclared(String var) {
 		for(int i=0; i<variables.size(); i++) {
@@ -240,8 +276,18 @@ public class Compile {
 		return statements;
 	}
 
+	public String getCode() {
+		String code = "";
 
 
+		for(int i=0; i<linesofcode.size(); i++) {
+			code += linesofcode.get(i) + "\n";
+		}
+
+		code += "ruuuuuuuu";
+
+		return code;
+	}
 
 
 
@@ -250,7 +296,7 @@ public class Compile {
 
 	public static void main(String[] args) {
 		Compile instance = new Compile();
-		instance.readCode();
+		//instance.readCode();
 		String error = instance.compile();
 
 		if(error.equals("")) {
