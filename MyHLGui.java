@@ -50,6 +50,7 @@ public class MyHLGui {
 
     protected JScrollPane inputpane;
     protected JTextArea inputarea;
+    protected JTextArea numarea;
 
     protected JScrollPane toolpane;
     protected JTextArea tooloutput;
@@ -94,7 +95,7 @@ public class MyHLGui {
 
         	newfile = new JMenuItem("New");
             newfile.setPreferredSize(new Dimension(80,27));
-            //newfile.addActionListener(new NewListener());
+            newfile.addActionListener(new NewListener());
             filemenu.add(newfile);
 
             open = new JMenuItem("Open");
@@ -158,7 +159,7 @@ public class MyHLGui {
 		newfile.setOpaque(false);
 		newfile.setContentAreaFilled(false);
 		newfile.setBorderPainted(false);
-		//newfile.addActionListener(new NewListener());
+		newfile.addActionListener(new NewListener());
 		newfile.setToolTipText("New");
 		mainpanel.add(newfile);
 
@@ -215,12 +216,22 @@ public class MyHLGui {
         filename.setForeground(Color.GRAY);
         filename.setBounds(20, 115, 290, 30);
 
+        numarea = new JTextArea();
+        numarea.setFont(new Font("Lucida Sans", Font.PLAIN, 18));
+        numarea.setText("1");
+        numarea.setBounds(5, 10, 15, 390);
+        numarea.setBorder(new CompoundBorder(BorderFactory.createLineBorder(Color.GRAY, 1), new EmptyBorder(5,5, 0, 3)));
+        numarea.setEditable(false);
+        
+
         inputarea = new JTextArea();
         inputpane = new JScrollPane(inputarea);
         inputarea.setFont(new Font("Lucida Sans", Font.PLAIN, 18));
         inputpane.setBounds(20, 10, 944, 390);
         inputarea.setBorder(new CompoundBorder(BorderFactory.createLineBorder(Color.DARK_GRAY, 2), new EmptyBorder(5,10, 0, 30)));
         codepanel.add(inputpane);
+
+        inputpane.setRowHeaderView(numarea);
 
         JLabel toolname = new JLabel("  Tool Output");
         toolname.setFont(new Font("Lucida Sans", Font.PLAIN, 18));
@@ -243,6 +254,24 @@ public class MyHLGui {
         mainframe.setVisible(true);
     }
 
+
+    /**
+    * ActionListener for New File
+    */
+    public class NewListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            inputarea.setText("");
+            numarea.setText("1");
+
+            filename.setText("   Document");
+
+            tooloutput.setText("");
+
+            inputarea.requestFocusInWindow();
+        }
+    }
+
+
     public class OpenListener implements ActionListener {
     	public void actionPerformed(ActionEvent e) {
             JFileChooser chooser = new JFileChooser("MyHLGui.java");
@@ -251,6 +280,7 @@ public class MyHLGui {
             int option = chooser.showOpenDialog(mainframe);
             if (option == JFileChooser.APPROVE_OPTION) {
                 inputarea.setText("");
+                numarea.setText("");
 
                 try {
                     File file = new File(chooser.getSelectedFile().getName());
@@ -259,10 +289,12 @@ public class MyHLGui {
                     BufferedReader bread =new BufferedReader(fread);
 
                     String readString = bread.readLine();
-
+                    int i=1;
                     while(readString != null) {
                         inputarea.setText(inputarea.getText()+readString+"\n");
                         readString = bread.readLine();
+                        numarea.setText(numarea.getText()+ " " +i+" \n");
+                        i++;
                     }
 
                     filename.setText("   " + chooser.getSelectedFile().getName());
@@ -280,9 +312,17 @@ public class MyHLGui {
         public void actionPerformed(ActionEvent e) {
             try {
                 tooloutput.setText("");
+                numarea.setText("");
+
+                String code = inputarea.getText();
 
                 Compile instance = new Compile();
-                instance.readCode(inputarea.getText());
+                instance.readCode(code);
+
+                String[] tokens = code.split("\\n");
+                for(int i=1; i<=tokens.length; i++) {
+                    numarea.setText(numarea.getText()+ " " +i+" \n");
+                }
 
                 String errormessage = instance.compile();
 
@@ -299,7 +339,7 @@ public class MyHLGui {
                 ex.printStackTrace();
             }
         }
-    }
+    } //BUILD listener
 
 
 
